@@ -1,6 +1,5 @@
-import { JSX } from 'react';
-import { Transaction } from '../App';
-import './TransactionList.css';
+import { Trash2, DollarSign, Utensils, Car, Tag } from 'lucide-react';
+import { Transaction } from '../pages/Home';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -31,79 +30,79 @@ function TransactionList({ transactions, onDeleteTransaction }: TransactionListP
   };
 
   const getCategoryIcon = (category: string) => {
-    const icons: Record<string, JSX.Element> = {
-      Salary: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 2L10 18M10 2L6 6M10 2L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ),
-      Food: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 2V10M6 10C4.89543 10 4 10.8954 4 12V18H8V12C8 10.8954 7.10457 10 6 10ZM14 2V6M14 6V18M14 6C12.8954 6 12 6.89543 12 8V18H16V8C16 6.89543 15.1046 6 14 6Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ),
-      Transport: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 10H16M4 10C2.89543 10 2 10.8954 2 12V16C2 17.1046 2.89543 18 4 18M4 10V6C4 4.89543 4.89543 4 6 4H14C15.1046 4 16 4.89543 16 6V10M16 10C17.1046 10 18 10.8954 18 12V16C18 17.1046 17.1046 18 16 18M4 18H5M4 18C4 16.8954 4.89543 16 6 16C7.10457 16 8 16.8954 8 18M16 18H15M16 18C16 16.8954 15.1046 16 14 16C12.8954 16 12 16.8954 12 18M8 18H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ),
-    };
-
-    return icons[category] || (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="2" />
-      </svg>
-    );
+    switch (category) {
+      case 'Salary': return <DollarSign size={20} />;
+      case 'Food': return <Utensils size={20} />;
+      case 'Transport': return <Car size={20} />;
+      default: return <Tag size={20} />;
+    }
   };
 
-  if (transactions.length === 0) {
-    return (
-      <section className="transaction-list">
-        <h2 className="section-title">Recent Transactions</h2>
-        <div className="empty-state glass-card">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
-            <path d="M32 20V44M20 32H44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <h3>No transactions yet</h3>
-          <p>Start tracking your finances by adding your first transaction</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="transaction-list slide-in">
-      <h2 className="section-title">Recent Transactions</h2>
-      <div className="transactions-container glass-card">
-        {transactions.map((transaction) => (
-          <div key={transaction.id} className="transaction-item">
-            <div className={`transaction-icon ${transaction.type}-icon`}>
-              {getCategoryIcon(transaction.category)}
-            </div>
-            <div className="transaction-details">
-              <h4 className="transaction-category">{transaction.category}</h4>
-              <p className="transaction-description">{transaction.description}</p>
-            </div>
-            <div className="transaction-meta">
-              <p className={`transaction-amount ${transaction.type}`}>
-                {transaction.type === 'income' ? '+' : '-'}
-                {formatCurrency(transaction.amount)}
-              </p>
-              <p className="transaction-date">{formatDate(transaction.date)}</p>
-            </div>
-            <button
-              className="delete-btn"
-              onClick={() => onDeleteTransaction(transaction.id)}
-              aria-label="Delete transaction"
+    <section>
+      <h2 style={{ fontSize: '1.5rem', marginBottom: 'var(--spacing-lg)' }}>Recent Transactions</h2>
+
+      {transactions.length === 0 ? (
+        <div className="glass-container" style={{ padding: 'var(--spacing-2xl)', textAlign: 'center' }}>
+          <p style={{ color: 'var(--color-text-secondary)' }}>No transactions found. Start by adding one!</p>
+        </div>
+      ) : (
+        <div className="glass-container" style={{ padding: 'var(--spacing-sm)' }}>
+          {transactions.map((transaction, index) => (
+            <div
+              key={transaction.id}
+              className="glass-card-hover"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: 'var(--spacing-md)',
+                borderRadius: 'var(--radius-lg)',
+                borderBottom: index !== transactions.length - 1 ? '1px solid var(--color-border)' : 'none',
+                transition: 'background 0.2s',
+              }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 4H14M6 4V2H10V4M6 7V12M10 7V12M3 4L4 14H12L13 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        ))}
-      </div>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: transaction.type === 'income' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: transaction.type === 'income' ? 'var(--color-success)' : 'var(--color-danger)',
+                marginRight: 'var(--spacing-md)'
+              }}>
+                {getCategoryIcon(transaction.category)}
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <h4 style={{ margin: 0, fontSize: '1rem' }}>{transaction.category}</h4>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{transaction.description}</p>
+              </div>
+
+              <div style={{ textAlign: 'right', marginRight: 'var(--spacing-lg)' }}>
+                <p style={{
+                  margin: 0,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: transaction.type === 'income' ? 'var(--color-success)' : 'var(--color-danger)'
+                }}>
+                  {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                </p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{formatDate(transaction.date)}</p>
+              </div>
+
+              <button
+                className="btn btn-ghost"
+                onClick={() => onDeleteTransaction(transaction.id)}
+                style={{ color: 'var(--color-danger)', padding: 'var(--spacing-xs)' }}
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

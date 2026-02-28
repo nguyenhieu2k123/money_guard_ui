@@ -1,4 +1,4 @@
-import './Dashboard.css';
+import { Plus, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 
 interface DashboardProps {
   balance: number;
@@ -16,65 +16,81 @@ function Dashboard({ balance, income, expense, onAddTransaction }: DashboardProp
   };
 
   return (
-    <section className="dashboard fade-in">
-      <div className="dashboard-header">
+    <section style={{ marginBottom: 'var(--spacing-2xl)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
         <div>
-          <h1 className="dashboard-title">Financial Overview</h1>
-          <p className="dashboard-subtitle">Track your income and expenses</p>
+          <h1 style={{ fontSize: '2rem', marginBottom: 'var(--spacing-xs)' }}>Financial Overview</h1>
+          <p style={{ color: 'var(--color-text-secondary)' }}>Track your income and expenses</p>
         </div>
         <button className="btn btn-primary" onClick={onAddTransaction}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          Add Transaction
+          <Plus size={20} />
+          <span>Add Transaction</span>
         </button>
       </div>
 
-      <div className="stats-grid">
-        <div className="stat-card glass-card balance-card">
-          <div className="stat-icon balance-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: 'var(--spacing-lg)'
+      }}>
+        <div className="glass-container glass-card-hover" style={{ padding: 'var(--spacing-xl)', position: 'relative' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--color-primary)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            <Wallet size={24} />
           </div>
-          <div className="stat-content">
-            <p className="stat-label">Total Balance</p>
-            <h2 className="stat-value balance-value">{formatCurrency(balance)}</h2>
-            <p className="stat-change positive">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 12V4M8 4L4 8M8 4L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              {((income / (income + expense)) * 100).toFixed(1)}% from income
-            </p>
-          </div>
-        </div>
-
-        <div className="stat-card glass-card income-card">
-          <div className="stat-icon income-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L12 22M12 2L6 8M12 2L18 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="stat-content">
-            <p className="stat-label">Total Income</p>
-            <h3 className="stat-value income-value">{formatCurrency(income)}</h3>
-            <p className="stat-info">This month</p>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>Total Balance</p>
+          <h2 style={{ fontSize: '2.5rem', margin: 'var(--spacing-xs) 0', fontWeight: 700 }}>{formatCurrency(balance)}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: 'var(--color-success)' }}>
+            <TrendingUp size={16} />
+            <span>Good progress this month</span>
           </div>
         </div>
 
-        <div className="stat-card glass-card expense-card">
-          <div className="stat-icon expense-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 22L12 2M12 22L6 16M12 22L18 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+        <div className="glass-container glass-card-hover" style={{ padding: 'var(--spacing-xl)' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--color-success)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            <TrendingUp size={24} />
           </div>
-          <div className="stat-content">
-            <p className="stat-label">Total Expenses</p>
-            <h3 className="stat-value expense-value">{formatCurrency(expense)}</h3>
-            <p className="stat-info">This month</p>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>Total Income</p>
+          <h2 style={{ fontSize: '2.25rem', margin: 'var(--spacing-xs) 0', fontWeight: 700, color: 'var(--color-success)' }}>{formatCurrency(income)}</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>From all sources</p>
+        </div>
+
+        <div className="glass-container glass-card-hover" style={{ padding: 'var(--spacing-xl)' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--color-danger)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            <TrendingDown size={24} />
           </div>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>Total Expenses</p>
+          <h2 style={{ fontSize: '2.25rem', margin: 'var(--spacing-xs) 0', fontWeight: 700, color: 'var(--color-danger)' }}>{formatCurrency(expense)}</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>This month</p>
         </div>
       </div>
     </section>

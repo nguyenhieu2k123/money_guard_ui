@@ -1,18 +1,1 @@
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.main-content {
-  flex: 1;
-  padding: var(--spacing-2xl) 0;
-  padding-top: calc(80px + var(--spacing-2xl));
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    padding: var(--spacing-lg) 0;
-    padding-top: calc(70px + var(--spacing-lg));
-  }
-}
+/* Main App styles are now in index.css */
