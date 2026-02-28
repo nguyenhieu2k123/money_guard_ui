@@ -35,7 +35,7 @@ function Home() {
       }
 
       if (!response.ok) {
-        throw new Error('Could not fetch transactions. Please try again later.');
+        throw new Error('New code');
       }
 
       const data = await response.json();
