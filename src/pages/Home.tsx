@@ -101,7 +101,7 @@ function Home() {
         <AlertCircle size={48} style={{ color: 'var(--color-danger)', marginBottom: 'var(--spacing-md)', marginInline: 'auto' }} />
         <h3 style={{ marginBottom: 'var(--spacing-sm)' }}>Sync Error</h3>
         <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-lg)' }}>{error}</p>
-        <button className="btn btn-secondary" onClick={() => fetchTransactions()}>
+        <button className="btn btn-primary" onClick={() => fetchTransactions()}>
           Retry Sync
         </button>
       </div>
