@@ -33,7 +33,6 @@ function App() {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
         {/* Main Routes */}
         <Route
           path="/"
