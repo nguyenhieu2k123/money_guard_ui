@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { Trash2, DollarSign, Utensils, Car, Tag, ShoppingBag, Home as HomeIcon, Heart, Search, Edit2, Check, X } from 'lucide-react';
 import { Transaction } from '../pages/Home';
 
