@@ -4,8 +4,7 @@ import Dashboard from '../components/Dashboard';
 import TransactionList from '../components/TransactionList';
 import AddTransactionModal from '../components/AddTransactionModal';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { fetchWithAuth } from '../utils/api';
-import { API_BASE_URL } from '../utils/config';
+import { getTransactions } from '../services/transaction.service';
 
 export interface Transaction {
   id: string;
@@ -21,37 +20,21 @@ function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const fetchTransactions = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/v1/transactions`);
-
-      if (response.status === 401) {
+      const data = await getTransactions();
+      setTransactions(data);
+    } catch (err: any) {
+      if (err.message.includes('401')) {
         navigate('/login');
         return;
       }
-
-      if (!response.ok) {
-        throw new Error('New code');
-      }
-
-      const data = await response.json();
-      const transactionsData = Array.isArray(data) ? data : data.transactions || [];
-
-      const formattedTransactions = transactionsData.map((t: any) => ({
-        id: t.id || t._id || Math.random().toString(36).substr(2, 9),
-        type: t.type === 'income' ? 'income' : 'expense',
-        category: t.category || 'Other',
-        amount: Number(t.amount) || 0,
-        description: t.description || '',
-        date: t.date || new Date().toISOString(),
-      }));
-
-      setTransactions(formattedTransactions);
-    } catch (err: any) {
       setError(err.message || 'An error occurred while fetching transactions');
       console.error('Fetch transactions error:', err);
     } finally {
@@ -75,6 +58,21 @@ function Home() {
   const deleteTransaction = (id: string) => {
     setTransactions(transactions.filter(t => t.id !== id));
   };
+
+  const updateTransaction = (id: string, updatedTransaction: Omit<Transaction, 'id'>) => {
+    setTransactions(transactions.map(t => 
+      t.id === id ? { ...updatedTransaction, id } : t
+    ));
+  };
+
+  // Filter and search logic
+  const filteredTransactions = transactions.filter(t => {
+    const matchesFilter = filter === 'all' || t.type === filter;
+    const matchesSearch = searchQuery === '' || 
+      t.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
   const totalIncome = transactions
     .filter(t => t.type === 'income')
@@ -115,11 +113,17 @@ function Home() {
         income={totalIncome}
         expense={totalExpense}
         onAddTransaction={() => setIsModalOpen(true)}
+        transactionCount={transactions.length}
       />
 
       <TransactionList
-        transactions={transactions}
+        transactions={filteredTransactions}
         onDeleteTransaction={deleteTransaction}
+        onUpdateTransaction={updateTransaction}
+        filter={filter}
+        onFilterChange={setFilter}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
       {isModalOpen && (

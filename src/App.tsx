@@ -33,6 +33,7 @@ function App() {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
         {/* Main Routes */}
         <Route
           path="/"
@@ -43,7 +44,18 @@ function App() {
           }
         />
         <Route
-          path="/categories"
+          path="/reports"
+          element={
+            <Layout theme={theme} onToggleTheme={toggleTheme}>
+              <div className="card" style={{ padding: 'var(--spacing-2xl)', textAlign: 'center' }}>
+                <h2 style={{ marginBottom: 'var(--spacing-md)' }}>Reports</h2>
+                <p style={{ color: 'var(--color-text-secondary)' }}>Coming soon - Charts and analytics</p>
+              </div>
+            </Layout>
+          }
+        />
+        <Route
+          path="/settings"
           element={
             <Layout theme={theme} onToggleTheme={toggleTheme}>
               <Categories />

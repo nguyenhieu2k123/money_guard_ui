@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, LogIn, ArrowRight } from 'lucide-react';
-import { API_BASE_URL } from '../utils/config';
+import { login } from '../services/auth.service';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,29 +10,22 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed. Please check your credentials.');
-      }
-
-      const data = await response.json();
-
+      const data = await login({ email, password });
+      
       console.log('Login successful:', data);
-      navigate('/categories');
+      
+      // Store token if provided
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      
+      navigate('/');
     } catch (err: any) {
       setError(err.message || 'An error occurred during login');
       console.error('Login error:', err);
@@ -49,30 +42,33 @@ const Login = () => {
       justifyContent: 'center',
       padding: 'var(--spacing-md)'
     }}>
-      <div className="liquid-bg"></div>
-
-      <div className="glass-container fade-in" style={{
+      <div className="card fade-in" style={{
         width: '100%',
         maxWidth: '450px',
         padding: 'var(--spacing-2xl)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-          <div className="logo" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
-            <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="8" fill="url(#login-gradient)" />
-              <path d="M16 8L20 12H12L16 8Z" fill="white" />
-              <path d="M16 24L12 20H20L16 24Z" fill="white" />
-              <circle cx="16" cy="16" r="3" fill="white" />
-              <defs>
-                <linearGradient id="login-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F59E0B" />
-                  <stop offset="1" stopColor="#FBBF24" />
-                </linearGradient>
-              </defs>
-            </svg>
+          <div className="logo" style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            marginBottom: 'var(--spacing-md)' 
+          }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--color-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white'
+            }}>
+              <LogIn size={24} />
+            </div>
           </div>
-          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: 'var(--spacing-xs)' }}>Welcome Back</h1>
-          <p style={{ color: 'var(--color-text-secondary)' }}>Log in to your MoneyGuard account</p>
+          <h1 style={{ fontSize: '2rem', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>Welcome Back</h1>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>Log in to your MoneyGuard account</p>
         </div>
 
         <form onSubmit={handleSubmit}>

@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { X, TrendingUp, TrendingDown, Type } from 'lucide-react';
+import { X, TrendingUp, TrendingDown } from 'lucide-react';
 import { Transaction } from '../pages/Home';
 
 interface AddTransactionModalProps {
@@ -21,7 +21,7 @@ function AddTransactionModal({ onClose, onAdd }: AddTransactionModalProps) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!category || !amount || !description) {
+    if (!category || !amount) {
       return;
     }
 
@@ -29,7 +29,7 @@ function AddTransactionModal({ onClose, onAdd }: AddTransactionModalProps) {
       type,
       category,
       amount: parseFloat(amount),
-      description,
+      description: description || category,
       date: new Date().toISOString(),
     });
   };
@@ -41,8 +41,7 @@ function AddTransactionModal({ onClose, onAdd }: AddTransactionModalProps) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      backdropFilter: 'blur(8px)',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -50,43 +49,68 @@ function AddTransactionModal({ onClose, onAdd }: AddTransactionModalProps) {
       padding: 'var(--spacing-md)'
     }} onClick={onClose}>
       <div
-        className="glass-container fade-in"
+        className="card fade-in"
         style={{
           width: '100%',
-          maxWidth: '500px',
+          maxWidth: '480px',
           padding: 'var(--spacing-2xl)',
           maxHeight: '90vh',
           overflowY: 'auto'
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
-          <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Add Transaction</h2>
-          <button className="btn btn-ghost" onClick={onClose} style={{ padding: 'var(--spacing-xs)' }}>
-            <X size={24} />
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'var(--spacing-xl)' 
+        }}>
+          <h2 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 600 }}>Add Transaction</h2>
+          <button 
+            className="btn btn-ghost" 
+            onClick={onClose} 
+            style={{ padding: 'var(--spacing-xs)', minWidth: '32px', height: '32px' }}
+            aria-label="Close modal"
+          >
+            <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
+          {/* Type Toggle */}
           <div className="input-group">
-            <label className="label">Transaction Type</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+            <label className="label">Type</label>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 1fr', 
+              gap: 'var(--spacing-sm)',
+              padding: '4px',
+              background: 'var(--color-bg-secondary)',
+              borderRadius: 'var(--radius-md)'
+            }}>
               <button
                 type="button"
-                className={`btn ${type === 'income' ? 'btn-primary' : 'btn-secondary'}`}
+                className="btn"
                 onClick={() => setType('income')}
-                style={{ height: '48px' }}
+                style={{ 
+                  height: '44px',
+                  background: type === 'income' ? 'var(--color-success)' : 'transparent',
+                  color: type === 'income' ? 'white' : 'var(--color-text-secondary)',
+                  border: 'none'
+                }}
               >
                 <TrendingUp size={18} />
                 <span>Income</span>
               </button>
               <button
                 type="button"
-                className={`btn ${type === 'expense' ? 'btn-primary' : 'btn-secondary'}`}
+                className="btn"
                 onClick={() => setType('expense')}
                 style={{
-                  height: '48px',
-                  background: type === 'expense' ? 'linear-gradient(135deg, var(--color-danger) 0%, #ff6b6b 100%)' : undefined
+                  height: '44px',
+                  background: type === 'expense' ? 'var(--color-danger)' : 'transparent',
+                  color: type === 'expense' ? 'white' : 'var(--color-text-secondary)',
+                  border: 'none'
                 }}
               >
                 <TrendingDown size={18} />
@@ -95,32 +119,18 @@ function AddTransactionModal({ onClose, onAdd }: AddTransactionModalProps) {
             </div>
           </div>
 
-          <div className="input-group">
-            <label className="label">Category</label>
-            <select
-              className="input"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-              style={{ height: '48px', appearance: 'none' }}
-            >
-              <option value="">Select a category</option>
-              {categories[type].map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-
+          {/* Amount - Large Input */}
           <div className="input-group">
             <label className="label">Amount</label>
             <div style={{ position: 'relative' }}>
               <div style={{
                 position: 'absolute',
-                left: '12px',
+                left: '16px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 color: 'var(--color-text-muted)',
-                fontWeight: 600
+                fontWeight: 600,
+                fontSize: '1.5rem'
               }}>$</div>
               <input
                 type="number"
@@ -131,39 +141,63 @@ function AddTransactionModal({ onClose, onAdd }: AddTransactionModalProps) {
                 step="0.01"
                 min="0"
                 required
-                style={{ paddingLeft: '32px', height: '48px' }}
+                autoFocus
+                style={{ 
+                  paddingLeft: '48px', 
+                  height: '64px',
+                  fontSize: '1.5rem',
+                  fontWeight: 600
+                }}
               />
             </div>
           </div>
 
+          {/* Category */}
+          <div className="input-group">
+            <label className="label">Category</label>
+            <select
+              className="input"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+              style={{ height: '48px' }}
+            >
+              <option value="">Select category</option>
+              {categories[type].map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Description - Optional */}
           <div className="input-group" style={{ marginBottom: 'var(--spacing-xl)' }}>
-            <label className="label">Description</label>
-            <div style={{ position: 'relative' }}>
-              <Type size={18} style={{
-                position: 'absolute',
-                left: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'var(--color-text-muted)'
-              }} />
-              <input
-                type="text"
-                className="input"
-                placeholder="What was this for?"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                style={{ paddingLeft: '40px', height: '48px' }}
-              />
-            </div>
+            <label className="label">Note (optional)</label>
+            <input
+              type="text"
+              className="input"
+              placeholder="Add a note..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={{ height: '48px' }}
+            />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose} style={{ height: '48px' }}>
+          {/* Actions */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 'var(--spacing-md)' }}>
+            <button 
+              type="button" 
+              className="btn btn-secondary" 
+              onClick={onClose} 
+              style={{ height: '48px' }}
+            >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" style={{ height: '48px' }}>
-              Save Transaction
+            <button 
+              type="submit" 
+              className="btn btn-primary" 
+              style={{ height: '48px' }}
+            >
+              Add Transaction
             </button>
           </div>
         </form>
